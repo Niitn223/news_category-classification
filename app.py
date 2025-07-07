@@ -12,11 +12,14 @@ st.title("📰 News Category Classifier")
 st.markdown("Enter a news headline below to predict its category using a machine learning model.")
 
 def clean_text(text):
+    if pd.isnull(text):
+        return ""
     text = text.lower()
-    text = re.sub(r'http\S+', '', text)  # remove links
-    text = re.sub(r'[^a-zA-Z ]', '', text)  # keep only letters
-    text = re.sub(r'\s+', ' ', text)  # remove extra spaces
+    text = re.sub(r'http\S+', '', text)  
+    text = re.sub(r'[^a-zA-Z ]', '', text)  
+    text = re.sub(r'\s+', ' ', text)  
     return text.strip()
+
 
 @st.cache_data
 def load_model():
