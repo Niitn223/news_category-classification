@@ -20,7 +20,7 @@ def clean_text(text):
 
 @st.cache_data
 def load_model():
-    df = pd.read_csv("News_Category_Dataset.csv")  # CSV file
+    df = pd.read_csv("news_sample.csv")  # CSV file
 
     if 'headline' not in df.columns or 'category' not in df.columns:
         st.error("CSV must have 'headline' and 'category' columns.")
