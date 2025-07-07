@@ -3,7 +3,7 @@ import pandas as pd
 import re
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import MultinomialNB  # 🔁 Replaced LogisticRegression
 from sklearn.preprocessing import LabelEncoder
 
 st.set_page_config(page_title="News Category Classifier", page_icon="📰", layout="centered")
@@ -23,29 +23,25 @@ def clean_text(text):
 # Load model and prepare data
 @st.cache_data
 def load_model():
-    df = pd.read_csv("news_sample.csv")  # ✅ Make sure this file is in your GitHub repo
+    df = pd.read_csv("news_sample.csv")  # ✅ Ensure this file exists in your repo
 
-    # Check expected columns exist
     if 'headline' not in df.columns or 'category' not in df.columns:
         st.error("CSV must have 'headline' and 'category' columns.")
         st.stop()
 
-    # Limit to top categories
     top_categories = ['POLITICS', 'ENTERTAINMENT', 'BUSINESS', 'SPORTS', 'TECH']
     df = df[df['category'].isin(top_categories)]
 
-    # Clean and encode
     df['cleaned'] = df['headline'].apply(clean_text)
     le = LabelEncoder()
     df['label'] = le.fit_transform(df['category'])
 
-    # Train-test split
     X_train, X_test, y_train, y_test = train_test_split(df['cleaned'], df['label'], test_size=0.2, random_state=42)
 
-    # TF-IDF and model
     vectorizer = TfidfVectorizer(ngram_range=(1,2), max_features=10000)
     X_train_vec = vectorizer.fit_transform(X_train)
-    model = LogisticRegression(max_iter=1000)
+
+    model = MultinomialNB()  # ✅ Using Naive Bayes
     model.fit(X_train_vec, y_train)
 
     return model, vectorizer, le
